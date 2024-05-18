@@ -22,7 +22,7 @@ Check Multiple Domains from a File
 To check multiple domains, use the -f option followed by the filename. Each line in the file should contain one domain: ./check_email_auth.sh -f domains.txt
 
 The script includes basic error handling to manage exceptions such as missing or invalid files and domains. If an error occurs, it will print an error message and continue execution.
-Contributing
+
 
 Contributions are welcome! If you have suggestions for improvements or find a bug, please open an issue or submit a pull request.
 
