@@ -1,13 +1,37 @@
-# Email Authentication Checker
+# Email Security Record Check Script
 
-This script checks the DMARC, SPF, and DKIM records for a given domain or a list of domains. It provides detailed information about the email authentication policies in place for each domain.
+## Script Overview
 
-## Features
+This script checks DMARC, SPF, DKIM, and BIMI records for given domains. It provides color-coded output for easy interpretation of the results.
 
-- **DMARC Record Check**: Verifies the presence and policy of DMARC records.
-- **SPF Record Check**: Verifies the presence and policy of SPF records.
-- **DKIM Record Check**: Verifies the presence of DKIM records for the default selector.
-- **Color-coded Output**: Provides easy-to-read, color-coded output indicating the status of each record.
+### Functions
+
+1. **check_dmarc**
+   - Checks for the presence of a DMARC record for a given domain.
+   - Verifies if the policy is set to `quarantine` or `reject`.
+
+2. **check_spf**
+   - Checks for the presence of an SPF record for a given domain.
+   - Distinguishes between hard fail (`-all`), soft fail (`~all`), and no explicit fail condition.
+
+3. **check_dkim**
+   - Checks for the presence of DKIM records for multiple common selectors.
+
+4. **check_bimi**
+   - Checks for the presence of a BIMI record for a given domain.
+
+### Main Script Logic
+
+- Accepts two types of inputs: a file containing a list of domains (`-f`) or a single domain (`-d`).
+- For each domain, it calls the `check_dmarc`, `check_spf`, `check_dkim`, and `check_bimi` functions.
+- Displays error messages if the file does not exist or if the domain is not specified.
+
+### Usage
+
+- **Check a file containing domains:**
+  ```sh
+  ./script.sh -f domains.txt
+
 
   The script relies on a few dependencies and commands that need to be available on the system where it is executed.
 Dependencies
