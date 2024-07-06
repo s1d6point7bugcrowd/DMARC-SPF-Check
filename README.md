@@ -9,6 +9,58 @@ This script checks the DMARC, SPF, and DKIM records for a given domain or a list
 - **DKIM Record Check**: Verifies the presence of DKIM records for the default selector.
 - **Color-coded Output**: Provides easy-to-read, color-coded output indicating the status of each record.
 
+  The script relies on a few dependencies and commands that need to be available on the system where it is executed.
+Dependencies
+
+    bash
+        The script is written in bash and requires the Bash shell to be installed on your system.
+
+    dig
+        dig (Domain Information Groper) is a command-line tool used for querying DNS name servers.
+        It is typically part of the bind-utils or dnsutils package, depending on the Linux distribution.
+
+    Color Support
+        The script uses ANSI escape codes to print colored text in the terminal. This requires a terminal that supports ANSI escape codes.
+
+Installation of Dependencies
+
+    Installing dig:
+        On Debian-based systems (e.g., Ubuntu):
+
+        
+
+sudo apt-get update
+sudo apt-get install dnsutils
+
+On Red Hat-based systems (e.g., CentOS, Fedora):
+
+
+
+        sudo yum install bind-utils
+
+Verifying Dependencies
+
+    Check if bash is installed:
+        This is usually pre-installed on most Unix-like operating systems.
+        To check the version of Bash:
+
+        
+
+    bash --version
+
+Check if dig is installed:
+
+    To verify if dig is installed and accessible:
+
+    
+
+        dig -v
+
+Additional Notes
+
+    The script assumes that the DNS servers are reachable and that the network configuration allows DNS queries.
+    Ensure your terminal supports ANSI escape codes to see the colored output correctly.
+
 Usage
 
 You can run the script with either a single domain or a file containing a list of domains.
