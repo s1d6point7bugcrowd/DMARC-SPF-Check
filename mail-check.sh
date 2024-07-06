@@ -10,6 +10,10 @@ NC='\033[0m' # No Color
 check_dmarc() {
  local domain=$1
  local dmarc_record=$(dig +short txt "_dmarc.$domain")
+ if [[ $? -ne 0 ]]; then
+ echo -e "${RED}Failed to query DMARC record for $domain.${NC}"
+ return
+ fi
  if [[ "$dmarc_record" == *"v=DMARC1"* ]]; then
  echo -e "${GREEN}DMARC record found for $domain:${NC}"
  echo "$dmarc_record"
@@ -27,6 +31,10 @@ check_dmarc() {
 check_spf() {
  local domain=$1
  local spf_record=$(dig +short txt "$domain" | grep "v=spf1")
+ if [[ $? -ne 0 ]]; then
+ echo -e "${RED}Failed to query SPF record for $domain.${NC}"
+ return
+ fi
  if [ -n "$spf_record" ]; then
  echo -e "${GREEN}SPF record found for $domain:${NC}"
  echo "$spf_record"
@@ -42,16 +50,41 @@ check_spf() {
  fi
 }
 
-# Function to check DKIM record
-# Note: This is a simple check for common selector 'default'. Adjust as necessary for specific use cases.
+# Function to check DKIM record for multiple common selectors
 check_dkim() {
  local domain=$1
- local dkim_record=$(dig +short txt "default._domainkey.$domain")
+ local selectors=("default" "selector1" "selector2")
+ local found=false
+ for selector in "${selectors[@]}"; do
+ local dkim_record=$(dig +short txt "$selector._domainkey.$domain")
+ if [[ $? -ne 0 ]]; then
+ echo -e "${RED}Failed to query DKIM record for selector $selector on $domain.${NC}"
+ continue
+ fi
  if [ -n "$dkim_record" ]; then
- echo -e "${GREEN}DKIM record found for $domain:${NC}"
+ echo -e "${GREEN}DKIM record found for selector $selector on $domain:${NC}"
  echo "$dkim_record"
+ found=true
+ fi
+ done
+ if [ "$found" = false ]; then
+ echo -e "${YELLOW}No DKIM record found for any common selectors on $domain.${NC}"
+ fi
+}
+
+# Function to check BIMI record
+check_bimi() {
+ local domain=$1
+ local bimi_record=$(dig +short txt "default._bimi.$domain")
+ if [[ $? -ne 0 ]]; then
+ echo -e "${RED}Failed to query BIMI record for $domain.${NC}"
+ return
+ fi
+ if [ -n "$bimi_record" ]; then
+ echo -e "${GREEN}BIMI record found for $domain:${NC}"
+ echo "$bimi_record"
  else
- echo -e "${YELLOW}No DKIM record found for $domain.${NC}"
+ echo -e "${YELLOW}No BIMI record found for $domain.${NC}"
  fi
 }
 
@@ -64,6 +97,7 @@ case "$1" in
  check_dmarc "$domain"
  check_spf "$domain"
  check_dkim "$domain"
+ check_bimi "$domain"
  done < "$file"
  else
  echo -e "${RED}File not specified or does not exist.${NC}"
@@ -75,6 +109,7 @@ case "$1" in
  check_dmarc "$domain"
  check_spf "$domain"
  check_dkim "$domain"
+ check_bimi "$domain"
  else
  echo -e "${RED}Domain not specified.${NC}"
  fi
